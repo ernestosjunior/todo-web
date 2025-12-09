@@ -1,0 +1,37 @@
+.main {
+    height: 100dvh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding-inline: 1.5rem;
+}
+
+.cadastro-form {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    max-width: 420px;
+    gap: 0.5rem;
+}
+
+.cadastro-form .cadastro-form__input {
+    width: 100%;
+}
+
+.cadastro-form__button {
+    width: 100%;
+}
+
+.cadastro_form__footer {
+    width: 100%;
+    margin-top: 24px;
+}
+
+.cadastro_form__footer p {
+    margin: 0;
+    text-align: center;
+    margin-top: 24px;
+}
