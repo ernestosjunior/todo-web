@@ -4,7 +4,7 @@ import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
-import { RouterModule } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { CadastroService } from './cadastro.service';
 import Swal from 'sweetalert2';
 
@@ -22,7 +22,8 @@ export class Cadastro {
   constructor(
     private fb: FormBuilder,
     private cadastroService: CadastroService,
-    private cd: ChangeDetectorRef
+    private cd: ChangeDetectorRef,
+    private router: Router
   ) {
     this.form = this.fb.group({
       name: ['', [Validators.required, Validators.minLength(2)]],
@@ -55,7 +56,10 @@ export class Cadastro {
             icon: 'success',
             title: 'Cadastrado',
             text: 'Usuário cadastrado com sucesso.',
-            confirmButtonColor: 'var(--mat-sys-primary)',
+            timer: 1500,
+            showConfirmButton: false,
+          }).then(() => {
+            this.router.navigateByUrl('/');
           });
           this.form.reset();
         },
