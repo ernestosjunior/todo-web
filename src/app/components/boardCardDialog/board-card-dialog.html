@@ -1,0 +1,68 @@
+<div>
+  <mat-dialog-content class="form">
+    <mat-form-field class="w-100">
+      <mat-label>Título</mat-label>
+      <input matInput required [(ngModel)]="data.title" [disabled]="!isEditing" />
+    </mat-form-field>
+
+    <div class="top">
+      <mat-form-field>
+        <mat-label>Status</mat-label>
+        <mat-select matNativeControl required [disabled]="!isEditing" [(ngModel)]="data.status">
+          <mat-option value="TODO" style="color: black">A fazer</mat-option>
+          <mat-option value="IN_PROGRESS" style="color: orange">Em andamento</mat-option>
+          <mat-option value="COMPLETED" style="color: green">Feito</mat-option>
+          <mat-option value="CANCELED" style="color: gray">Cancelada</mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field>
+        <mat-label>Prioridade</mat-label>
+        <mat-select matNativeControl required [disabled]="!isEditing" [(ngModel)]="data.priority">
+          <mat-option value="LOW" style="color: green">Baixa</mat-option>
+          <mat-option value="MEDIUM" style="color: orange">Média</mat-option>
+          <mat-option value="HIGH" style="color: red">Alta</mat-option>
+          <mat-option value="URGENT" style="color: red; font-weight: bold">Urgente</mat-option>
+        </mat-select>
+      </mat-form-field>
+    </div>
+
+    <mat-form-field class="w-100">
+      <mat-label>Descrição</mat-label>
+      <textarea matInput rows="4" [(ngModel)]="data.description" [disabled]="!isEditing"></textarea>
+    </mat-form-field>
+
+    <app-user-select
+      [selectedUser]="data.userId"
+      [disabled]="!isEditing"
+      (userSelected)="onUserSelected($event)"
+    ></app-user-select>
+
+    <mat-form-field>
+      <mat-label>Prazo final</mat-label>
+      <input
+        required
+        matInput
+        [matDatepicker]="picker"
+        [(ngModel)]="data.deadline"
+        [disabled]="!isEditing"
+      />
+      <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+      <mat-datepicker #picker></mat-datepicker>
+    </mat-form-field>
+  </mat-dialog-content>
+
+  <mat-dialog-actions align="end">
+    @if (!isNewTask){
+    <button mat-button (click)="close()">
+      {{ isEditing ? 'Cancelar edição' : 'Fechar' }}
+    </button>
+    }
+
+    <button mat-raised-button color="primary" *ngIf="!isEditing" (click)="toggleEdit()">
+      Editar
+    </button>
+
+    <button mat-raised-button color="primary" *ngIf="isEditing" (click)="save()">Salvar</button>
+  </mat-dialog-actions>
+</div>

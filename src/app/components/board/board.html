@@ -1,0 +1,136 @@
+<div class="container">
+  <div class="create-task-btn-container">
+    <button class="create-task-btn" (click)="createCard('TODO')">+ Nova tarefa</button>
+  </div>
+
+  <div class="board">
+    <mat-card
+      class="lane"
+      cdkDropList
+      id="todo"
+      [cdkDropListData]="todo"
+      [cdkDropListConnectedTo]="['doing', 'done']"
+      (cdkDropListDropped)="drop($event)"
+    >
+      <mat-card-header class="header">
+        <mat-card-title>A fazer</mat-card-title>
+      </mat-card-header>
+
+      <mat-card-content>
+        <mat-card
+          class="card"
+          [ngClass]="getPriorityClass(item.priority)"
+          *ngFor="let item of todo"
+          cdkDrag
+          (click)="openCard(item)"
+          cdkDragHandle
+        >
+          <div class="card-header">
+            <p class="title">{{ item.title }}</p>
+            <span class="tag-priority">{{ getPriorityLabel(item.priority) }}</span>
+          </div>
+
+          <div class="card-deadline" *ngIf="item.deadline">
+            <span>Prazo: </span>
+            <strong>{{ item.deadline | date : 'shortDate' }}</strong>
+          </div>
+
+          <div class="card-user-select">
+            <button mat-button class="selected-user">
+              <div class="avatar">{{ getInitials(getUserById(item.userId)?.name ?? '') }}</div>
+              <span class="user-name">{{
+                getUserById(item.userId)?.name || 'Sem responsável'
+              }}</span>
+            </button>
+          </div>
+        </mat-card>
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card
+      class="lane"
+      cdkDropList
+      id="doing"
+      [cdkDropListData]="doing"
+      [cdkDropListConnectedTo]="['todo', 'done']"
+      (cdkDropListDropped)="drop($event)"
+    >
+      <mat-card-header class="header">
+        <mat-card-title>Em andamento</mat-card-title>
+      </mat-card-header>
+
+      <mat-card-content>
+        <mat-card
+          class="card"
+          [ngClass]="getPriorityClass(item.priority)"
+          *ngFor="let item of doing"
+          cdkDrag
+          (click)="openCard(item)"
+          cdkDragHandle
+        >
+          <div class="card-header">
+            <p class="title">{{ item.title }}</p>
+            <span class="tag-priority">{{ getPriorityLabel(item.priority) }}</span>
+          </div>
+
+          <div class="card-deadline" *ngIf="item.deadline">
+            <span>Prazo: </span>
+            <strong>{{ item.deadline | date : 'shortDate' }}</strong>
+          </div>
+
+          <div class="card-user-select">
+            <button mat-button class="selected-user">
+              <div class="avatar">{{ getInitials(getUserById(item.userId)?.name ?? '') }}</div>
+              <span class="user-name">{{
+                getUserById(item.userId)?.name || 'Sem responsável'
+              }}</span>
+            </button>
+          </div>
+        </mat-card>
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card
+      class="lane"
+      cdkDropList
+      id="done"
+      [cdkDropListData]="done"
+      [cdkDropListConnectedTo]="['todo', 'doing']"
+      (cdkDropListDropped)="drop($event)"
+    >
+      <mat-card-header class="header">
+        <mat-card-title>Feito</mat-card-title>
+      </mat-card-header>
+
+      <mat-card-content>
+        <mat-card
+          class="card"
+          [ngClass]="getPriorityClass(item.priority)"
+          *ngFor="let item of done"
+          cdkDrag
+          (click)="openCard(item)"
+          cdkDragHandle
+        >
+          <div class="card-header">
+            <p class="title">{{ item.title }}</p>
+            <span class="tag-priority">{{ getPriorityLabel(item.priority) }}</span>
+          </div>
+
+          <div class="card-deadline" *ngIf="item.deadline">
+            <span>Prazo: </span>
+            <strong>{{ item.deadline | date : 'shortDate' }}</strong>
+          </div>
+
+          <div class="card-user-select">
+            <button mat-button class="selected-user">
+              <div class="avatar">{{ getInitials(getUserById(item.userId)?.name ?? '') }}</div>
+              <span class="user-name">{{
+                getUserById(item.userId)?.name || 'Sem responsável'
+              }}</span>
+            </button>
+          </div>
+        </mat-card>
+      </mat-card-content>
+    </mat-card>
+  </div>
+</div>
