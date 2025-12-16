@@ -15,6 +15,7 @@ import { BoardCardDialogComponent } from '../boardCardDialog/board-card-dialog';
 import { User } from '../userSelect/types';
 import { UserService } from '../userSelect/user.service';
 import { MatMenuModule } from '@angular/material/menu';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-board',
@@ -63,6 +64,14 @@ export class Board {
     }
   }
 
+  getCardClasses(card: BoardCard) {
+    if (card.status === 'CANCELED') {
+      return 'card-canceled';
+    }
+
+    return this.getPriorityClass(card.priority);
+  }
+
   getPriorityLabel(priority: string): string {
     switch (priority) {
       case 'LOW':
@@ -78,6 +87,31 @@ export class Board {
     }
   }
 
+  private removeCardFromBoard(card: BoardCard) {
+    this.todo = this.todo.filter((c) => c.id !== card.id);
+    this.doing = this.doing.filter((c) => c.id !== card.id);
+    this.done = this.done.filter((c) => c.id !== card.id);
+  }
+
+  private moveCardBetweenLanes(card: BoardCard, newStatus: BoardCard['status']) {
+    this.removeCardFromBoard(card);
+
+    switch (newStatus) {
+      case 'TODO':
+        this.todo.push(card);
+        break;
+      case 'IN_PROGRESS':
+        this.doing.push(card);
+        break;
+      case 'COMPLETED':
+        this.done.push(card);
+        break;
+      case 'CANCELED':
+        this.done.push(card);
+        break;
+    }
+  }
+
   constructor(
     private boardService: BoardService,
     private userService: UserService,
@@ -89,7 +123,7 @@ export class Board {
     this.boardService.getBoard().subscribe((board) => {
       this.todo = board.TODO ?? [];
       this.doing = board.IN_PROGRESS ?? [];
-      this.done = board.COMPLETED ?? [];
+      this.done = (board.COMPLETED ?? []).concat(board.CANCELED ?? []);
 
       this.cd.detectChanges();
     });
@@ -103,6 +137,18 @@ export class Board {
 
   drop(event: CdkDragDrop<any[]>) {
     const card = event.previousContainer.data[event.previousIndex];
+
+    if (card.status === 'CANCELED' && event.container.id !== 'done') {
+      Swal.fire({
+        icon: 'error',
+        title: 'Erro',
+        text: 'Você não pode movimentar uma tarefa cancelada. Atualize o status da tarefa.',
+        timer: 5000,
+        showConfirmButton: false,
+        timerProgressBar: true,
+      });
+      return;
+    }
 
     if (event.previousContainer === event.container) {
       moveItemInArray(event.container.data, event.previousIndex, event.currentIndex);
@@ -150,13 +196,16 @@ export class Board {
     dialogRef.afterClosed().subscribe((updatedCard) => {
       if (!updatedCard) return;
 
+      const previousStatus = card.status;
       const { id, createdAt, ...payload } = updatedCard;
 
-      this.boardService.patchCard(card.id, payload).subscribe({
-        next: (savedCard) => {
-          Object.assign(card, savedCard);
-          this.cd.detectChanges();
-        },
+      this.boardService.patchCard(card.id, payload).subscribe((savedCard) => {
+        if (previousStatus !== savedCard.status) {
+          this.moveCardBetweenLanes(card, savedCard.status);
+        }
+
+        Object.assign(card, savedCard);
+        this.cd.detectChanges();
       });
     });
   }
@@ -168,7 +217,7 @@ export class Board {
     return words[0].charAt(0) + words[words.length - 1].charAt(0);
   }
 
-  createCard(status: BoardCard['status']) {
+  createCard() {
     const dialogRef = this.dialog.open(BoardCardDialogComponent, {
       width: '500px',
       data: {},
@@ -177,22 +226,25 @@ export class Board {
     dialogRef.afterClosed().subscribe((newCard: BoardCard) => {
       if (!newCard) return;
 
-      newCard.status = status;
+      switch (newCard.status) {
+        case 'TODO':
+          newCard.ord = this.todo.length + 1;
+          break;
+        case 'IN_PROGRESS':
+          newCard.ord = this.doing.length + 1;
+          break;
+        case 'COMPLETED':
+          newCard.ord = this.done.length + 1;
+          break;
+        case 'CANCELED':
+          newCard.ord = this.done.length + 1;
+          break;
+      }
 
-      // this.boardService.createCard(newCard).subscribe((createdCard) => {
-      //   switch (status) {
-      //     case 'TODO':
-      //       this.todo.push(createdCard);
-      //       break;
-      //     case 'IN_PROGRESS':
-      //       this.doing.push(createdCard);
-      //       break;
-      //     case 'COMPLETED':
-      //       this.done.push(createdCard);
-      //       break;
-      //   }
-      //   this.cd.detectChanges();
-      // });
+      this.boardService.createCard(newCard).subscribe((createdCard) => {
+        this.moveCardBetweenLanes(createdCard, createdCard.status);
+        this.cd.detectChanges();
+      });
     });
   }
 }

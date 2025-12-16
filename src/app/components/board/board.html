@@ -1,6 +1,6 @@
 <div class="container">
   <div class="create-task-btn-container">
-    <button class="create-task-btn" (click)="createCard('TODO')">+ Nova tarefa</button>
+    <button class="create-task-btn" (click)="createCard()">+ Nova tarefa</button>
   </div>
 
   <div class="board">
@@ -19,7 +19,7 @@
       <mat-card-content>
         <mat-card
           class="card"
-          [ngClass]="getPriorityClass(item.priority)"
+          [ngClass]="getCardClasses(item)"
           *ngFor="let item of todo"
           cdkDrag
           (click)="openCard(item)"
@@ -62,7 +62,7 @@
       <mat-card-content>
         <mat-card
           class="card"
-          [ngClass]="getPriorityClass(item.priority)"
+          [ngClass]="getCardClasses(item)"
           *ngFor="let item of doing"
           cdkDrag
           (click)="openCard(item)"
@@ -105,7 +105,7 @@
       <mat-card-content>
         <mat-card
           class="card"
-          [ngClass]="getPriorityClass(item.priority)"
+          [ngClass]="getCardClasses(item)"
           *ngFor="let item of done"
           cdkDrag
           (click)="openCard(item)"

@@ -66,6 +66,10 @@ export class BoardCardDialogComponent {
       return;
     }
 
+    if (!this.data.description) {
+      this.data.description = '';
+    }
+
     this.dialogRef.close(this.data);
   }
 

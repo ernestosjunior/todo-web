@@ -15,7 +15,10 @@ export class BoardService {
   }
 
   patchCard(id: number, updates: Partial<BoardCard>): Observable<BoardCard> {
-    console.log(updates);
     return this.http.patch<BoardCard>(`${this.api}/${id}`, updates);
+  }
+
+  createCard(data: Partial<BoardCard>): Observable<BoardCard> {
+    return this.http.post<BoardCard>(this.api, data);
   }
 }

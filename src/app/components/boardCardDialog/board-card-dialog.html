@@ -63,6 +63,8 @@
       Editar
     </button>
 
-    <button mat-raised-button color="primary" *ngIf="isEditing" (click)="save()">Salvar</button>
+    <button mat-raised-button color="primary" *ngIf="isEditing" (click)="save()">
+      {{ isNewTask ? 'Criar' : 'Salvar' }}
+    </button>
   </mat-dialog-actions>
 </div>

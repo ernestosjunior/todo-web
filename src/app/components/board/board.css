@@ -57,25 +57,43 @@
 }
 
 .card-low {
-    background-color: #d4edda;
+
+    border-left: 4px solid #28a745;
+
 }
 
 .card-medium {
-    background-color: #fff3cd;
+
+    border-left: 4px solid #ffc107;
+
 }
 
 .card-high {
-    background-color: #f8d7da;
+
+    border-left: 4px solid #dc3545;
+
 }
 
 .card-urgent {
     background-color: #f5c6cb;
+    border-left: 4px solid #bd2130;
+
+}
+
+.card-canceled {
+
+    border-left: 4px solid #adb5bd;
+    color: #6c757d;
+}
+
+.card-canceled .title {
+    text-decoration: line-through;
 }
 
 .tag-priority {
     padding: 2px 6px;
     border-radius: 4px;
-    font-size: 0.75rem;
+    font-size: 1rem;
     font-weight: bold;
     color: #000;
     margin-left: 8px;
